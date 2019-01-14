@@ -6,10 +6,54 @@
 
 #IncludeRegexTransform: 
 
+../glimac/include/glimac/FilePath.hpp
+string
+-
+
+../glimac/include/glimac/Image.hpp
+vector
+-
+memory
+-
+unordered_map
+-
+glm.hpp
+../glimac/include/glimac/glm.hpp
+FilePath.hpp
+../glimac/include/glimac/FilePath.hpp
+
+../glimac/include/glimac/Program.hpp
+GL/glew.h
+-
+Shader.hpp
+../glimac/include/glimac/Shader.hpp
+FilePath.hpp
+../glimac/include/glimac/FilePath.hpp
+
 ../glimac/include/glimac/SDLWindowManager.hpp
 cstdint
 -
 SDL/SDL.h
+-
+glm.hpp
+../glimac/include/glimac/glm.hpp
+
+../glimac/include/glimac/Shader.hpp
+GL/glew.h
+-
+string
+-
+FilePath.hpp
+../glimac/include/glimac/FilePath.hpp
+
+../glimac/include/glimac/Sphere.hpp
+vector
+-
+common.hpp
+../glimac/include/glimac/common.hpp
+
+../glimac/include/glimac/common.hpp
+GL/glew.h
 -
 glm.hpp
 ../glimac/include/glimac/glm.hpp
@@ -771,6 +815,12 @@ app.hpp
 /home/chekbo/Documents/Studies/S3/3D/Projet/Solar-System/src/app.hpp
 glimac/SDLWindowManager.hpp
 -
+glimac/common.hpp
+-
+glimac/Program.hpp
+-
+glimac/Image.hpp
+-
 GL/glew.h
 -
 iostream
@@ -781,6 +831,8 @@ algorithm
 -
 string
 -
+planet.hpp
+/home/chekbo/Documents/Studies/S3/3D/Projet/Solar-System/src/planet.hpp
 
 /home/chekbo/Documents/Studies/S3/3D/Projet/Solar-System/src/camera.cpp
 
@@ -795,4 +847,24 @@ app.hpp
 /home/chekbo/Documents/Studies/S3/3D/Projet/Solar-System/src/app.hpp
 
 /home/chekbo/Documents/Studies/S3/3D/Projet/Solar-System/src/planet.cpp
+planet.hpp
+/home/chekbo/Documents/Studies/S3/3D/Projet/Solar-System/src/planet.hpp
+
+/home/chekbo/Documents/Studies/S3/3D/Projet/Solar-System/src/planet.hpp
+iostream
+-
+glimac/common.hpp
+-
+glimac/Sphere.hpp
+-
+glimac/Program.hpp
+-
+glimac/Image.hpp
+-
+shared.hpp
+/home/chekbo/Documents/Studies/S3/3D/Projet/Solar-System/src/shared.hpp
+
+/home/chekbo/Documents/Studies/S3/3D/Projet/Solar-System/src/shared.hpp
+GL/glew.h
+-
 

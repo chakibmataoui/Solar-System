@@ -5,6 +5,8 @@
 
 using namespace glimac;
 
+FilePath *applicationPath;
+
 int main(int argc, char** argv) {
     // Initialize SDL and open a window
     SDLWindowManager windowManager(800, 600, "GLImac");
@@ -18,7 +20,8 @@ int main(int argc, char** argv) {
 
     std::cout << "OpenGL Version : " << glGetString(GL_VERSION) << std::endl;
     std::cout << "GLEW Version : " << glewGetString(GLEW_VERSION) << std::endl;
-
+    //Loading filepath
+    applicationPath = new FilePath(argv[0]);
     app solar_sys(windowManager);
     /*********************************
      * HERE SHOULD COME THE INITIALIZATION CODE
