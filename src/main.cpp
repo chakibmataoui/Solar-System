@@ -1,6 +1,7 @@
 #include <glimac/SDLWindowManager.hpp>
 #include <GL/glew.h>
 #include <iostream>
+#include "app.hpp"
 
 using namespace glimac;
 
@@ -18,10 +19,11 @@ int main(int argc, char** argv) {
     std::cout << "OpenGL Version : " << glGetString(GL_VERSION) << std::endl;
     std::cout << "GLEW Version : " << glewGetString(GLEW_VERSION) << std::endl;
 
+    app solar_sys(windowManager);
     /*********************************
      * HERE SHOULD COME THE INITIALIZATION CODE
      *********************************/
-
+    solar_sys.init();
     // Application loop:
     bool done = false;
     while(!done) {
@@ -31,12 +33,14 @@ int main(int argc, char** argv) {
             if(e.type == SDL_QUIT) {
                 done = true; // Leave the loop after this iteration
             }
+	    solar_sys.handleEvent(e);
         }
+	solar_sys.update();
 
         /*********************************
          * HERE SHOULD COME THE RENDERING CODE
          *********************************/
-
+	solar_sys.draw();
         // Update the display
         windowManager.swapBuffers();
     }
