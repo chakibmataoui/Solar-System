@@ -4,10 +4,12 @@
 #include <glimac/Sphere.hpp>
 #include <glimac/Program.hpp>
 #include <glimac/Image.hpp>
+#include <glm/glm.hpp>
 #include "shared.hpp"
 
 using namespace std;
 using namespace glimac;
+using namespace glm;
 
 class planet{
 public:
@@ -37,5 +39,13 @@ public:
   GLuint _vao;
   GLuint _vbo;
   GLuint _texture;
+  glm::mat4 ProjMatrix;
+  glm::mat4 MVMatrix;
+  glm::mat4 NormalMatrix;
+  //Shader related
   Program *_shader;
+  GLint uMVPMatrix;
+  GLint uMVMatrix;
+  GLint uNormalMatrix;
+  GLint uTime;
 };
