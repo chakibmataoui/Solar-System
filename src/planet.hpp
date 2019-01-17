@@ -14,38 +14,35 @@ using namespace glm;
 class planet{
 public:
   //Methods
-  planet(float x = 0, float y = 0, float z = 0, float r = 1,
-	 float c_x = 0, float c_y = 0, float c_z = 0, float c_r = 1);
+  planet(vec4 ballCoords = vec4(0,0,0,1),vec4 pathCoords = vec4(0,0,0,0),vec3 elipseCoefs = vec3(1,1,1), vec2 rotationSpeed = vec2(0,0));
   ~planet(){
     glDeleteBuffers(1,&_vbo);
     glDeleteVertexArrays(1,&_vao);
+    glDeleteTextures(1,&_texture);
   };
   void draw();
+  void update(float delta);
   void assignShader(Program &shader);
+  void loadTexture(string filepath);
   //void loadTexture();
   //Props
   Sphere *_ball;
+  vec2 speed; //Around it self and arround rotation point
+  vec2 rotations;
+  vec3 _elipseCoefs;
+  vec3 translation;
   //Ball related positions
-  float _x;
-  float _y;
-  float _z;
-  float _r;
+  vec4 _ballCoords;
   //Galaxy related positions
-  float _c_x;
-  float _c_y;
-  float _c_z;
-  float _c_r;
+  vec4 _pathCoords;
   //OpenGLrelated
   GLuint _vao;
   GLuint _vbo;
   GLuint _texture;
-  glm::mat4 ProjMatrix;
-  glm::mat4 MVMatrix;
-  glm::mat4 NormalMatrix;
+  glm::mat4 ModelMatrix;
   //Shader related
+ 
   Program *_shader;
-  GLint uMVPMatrix;
-  GLint uMVMatrix;
-  GLint uNormalMatrix;
   GLint uTime;
+  GLint uSampler;
 };

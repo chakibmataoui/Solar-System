@@ -9,7 +9,8 @@ FilePath *applicationPath;
 
 int main(int argc, char** argv) {
     // Initialize SDL and open a window
-    SDLWindowManager windowManager(800, 600, "GLImac");
+  int w = 800, h = 600;
+    SDLWindowManager windowManager(w, h, "GLImac");
 
     // Initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -26,8 +27,10 @@ int main(int argc, char** argv) {
     /*********************************
      * HERE SHOULD COME THE INITIALIZATION CODE
      *********************************/
-    solar_sys.init();
+    solar_sys.init(w,h);
     // Application loop:
+    float lastTime = 0;
+    float delta = 0;
     bool done = false;
     while(!done) {
         // Event loop:
@@ -38,7 +41,10 @@ int main(int argc, char** argv) {
             }
 	    solar_sys.handleEvent(e);
         }
-	solar_sys.update();
+	float currentTime = windowManager.getTime();
+	delta = currentTime - lastTime;
+	lastTime = currentTime;
+	solar_sys.update(delta);
 
         /*********************************
          * HERE SHOULD COME THE RENDERING CODE

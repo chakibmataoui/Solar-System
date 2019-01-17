@@ -1,9 +1,8 @@
 #include "planet.hpp"
 
-planet::planet(float x, float y, float z,float r,
-	       float c_x, float c_y ,float c_z, float c_r) : _x(x), _y(y) , _z(z),_r(r) ,_c_x(c_x), _c_y(c_y) , _c_z(c_z),_c_r(c_r) {
+planet::planet(vec4 ballCoords,vec4 pathCoords ,vec3 elipseCoefs, vec2 rotationSpeed) :_ballCoords(ballCoords),_pathCoords(pathCoords),speed(rotationSpeed) , _elipseCoefs(elipseCoefs) {
   //Sphere creation
-  _ball = new Sphere(_r,32,16);
+  _ball = new Sphere(_ballCoords.w,32,16);
 
   //VBO creation
   glGenBuffers(1,&_vbo);
@@ -25,10 +24,12 @@ planet::planet(float x, float y, float z,float r,
   glBindVertexArray(0);
 
   //Matrix initialization
-  ProjMatrix = glm::perspective(glm::radians(45.f),1.f,0.1f,1000.f);
-  MVMatrix = translate(ProjMatrix,vec3(1,1,-5));
-  NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
-  //Others
+  ModelMatrix = glm::mat4(1.0f);
+  rotations = vec2(0,0);
+
+  //Textures
+  glGenTextures(1,&_texture);
+  
 }
 
 void planet::draw(){
@@ -40,19 +41,41 @@ void planet::draw(){
     _shader->use();
   }
   //Drawing
+  glBindTexture(GL_TEXTURE_2D,_texture);
+  glActiveTexture(_texture);
+  glUniform1i(uSampler,0);
+  
   glBindVertexArray(_vao);
-  glm::mat4 mvp = ProjMatrix * MVMatrix;
-  glUniformMatrix4fv(uMVPMatrix,1,GL_FALSE,glm::value_ptr(mvp));
-  glUniformMatrix4fv(uMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
-  glUniformMatrix4fv(uNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
   glDrawArrays(GL_TRIANGLES,0,_ball->getVertexCount());
   glBindVertexArray(0);
+  
+  glBindTexture(GL_TEXTURE_2D,0);
 }
 
 void planet::assignShader(Program &shader){
   _shader = &shader;
-  uMVPMatrix = glGetUniformLocation(_shader->getGLId(),"uMVPMatrix");
-  uMVMatrix = glGetUniformLocation(_shader->getGLId(),"uMVMatrix");
-  uNormalMatrix = glGetUniformLocation(_shader->getGLId(),"uNormalMatrix");
-  // uMVPMatrix = glGetUniformLocation(_shader->getGLId(),"uMVPMatrix");
+  uSampler = glGetUniformLocation(_shader->getGLId(),"fSampler");
+}
+
+void planet::loadTexture(string filepath){
+  cout << "Loading texture" << endl;
+  std::unique_ptr<Image> texImg = loadImage(FilePath(filepath));
+  glBindTexture(GL_TEXTURE_2D,_texture);
+    
+  glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,texImg->getWidth(),texImg->getHeight(),0,GL_RGBA,GL_FLOAT,texImg->getPixels());
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glBindTexture(GL_TEXTURE_2D,0);
+}
+
+
+void planet::update(float delta){
+  	       
+  rotations.y +=speed.y*delta;
+  translation = vec3(cos(rotations.y)*_pathCoords.w*_elipseCoefs.x + _pathCoords.x , 0,sin(rotations.y)*_pathCoords.w *_elipseCoefs.z + _pathCoords.z);
+  ModelMatrix = translate(mat4(1),translation);
+
+  rotations.x += speed.x*delta;
+  ModelMatrix = rotate(ModelMatrix,radians(rotations.x),vec3(0,1,0));
+	
 }

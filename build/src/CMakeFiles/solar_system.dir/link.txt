@@ -1,0 +1,1 @@
+/usr/bin/c++  -g  -rdynamic CMakeFiles/solar_system.dir/app.cpp.o CMakeFiles/solar_system.dir/camera.cpp.o CMakeFiles/solar_system.dir/main.cpp.o CMakeFiles/solar_system.dir/planet.cpp.o  -o solar_system ../glimac/libglimac.a -lSDL -lpthread -lGL -lGLU -lGLEW 

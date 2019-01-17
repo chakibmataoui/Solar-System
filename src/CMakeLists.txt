@@ -1,10 +1,11 @@
 file(GLOB HEADER_FILES *.hpp)
 file(GLOB SRC_FILES *.cpp)
 file(GLOB_RECURSE SHADER_FILES *.glsl)
-
+file(GLOB_RECURSE TEXTURE_FILES *.jpg)
 
     set(OUTPUT solar_system)
-    add_executable(${OUTPUT} ${SRC_FILES} ${HEADER_FILES} ${SHADER_FILES})
+    add_executable(${OUTPUT} ${SRC_FILES} ${HEADER_FILES} ${SHADER_FILES} ${TEXTURE_FILES})
     target_link_libraries(${OUTPUT} ${ALL_LIBRARIES})
 
 file(COPY ${SHADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/shaders)
+file(COPY ${TEXTURE_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/textures)
