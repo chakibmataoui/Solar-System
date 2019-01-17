@@ -70,9 +70,8 @@ void planet::loadTexture(string filepath){
 
 
 void planet::update(float delta){
-  	       
   rotations.y +=speed.y*delta;
-  translation = vec3(cos(rotations.y)*_pathCoords.w*_elipseCoefs.x + _pathCoords.x , 0,sin(rotations.y)*_pathCoords.w *_elipseCoefs.z + _pathCoords.z);
+  translation = vec3(cos(rotations.y)*_pathCoords.w*_elipseCoefs.x + _pathCoords.x , cos(radians(rotations.y))*_pathCoords.y,sin(rotations.y)*_pathCoords.w *_elipseCoefs.z + _pathCoords.z);
   ModelMatrix = translate(mat4(1),translation);
 
   rotations.x += speed.x*delta;

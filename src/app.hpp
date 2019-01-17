@@ -20,7 +20,7 @@ using namespace glm;
 extern FilePath *applicationPath;
 
 
-const float ratio = 100000;
+const float ratio = 30000;
 const float daySpeed = 1;
 class app{
 public:
@@ -39,7 +39,7 @@ private:
   planet sun = planet(vec4(0,0,0,(float)1391016/ratio),vec4(0,0,0,0),vec3(1,1,1),vec2(daySpeed*25,0));
   vector<planet*> planetList;
   //Skybox
-  planet skybox = planet(vec4(0,0,0,1000));
+  planet skybox = planet(vec4(0,0,0,50000));
   //Shaders generic
   Program gen;
   GLint uMVP,uMV,uNormal,uTextureSampler;
@@ -51,4 +51,10 @@ private:
   mat4 MV;
   mat4 MVP;
   mat4 Normal;
+  //path related
+  vector<vec3> generatePath(float radius,float y);
+  void initPaths();
+  void drawPaths();
+  GLuint pathsVBO[9],pathsVAO[9];
+  vector<vector<vec3>> paths;
 };

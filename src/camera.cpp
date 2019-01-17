@@ -61,15 +61,46 @@ void camera::update(float delta){
     if(movState.turnDown){
       zoomIn += speed;
     }
-    vec3 front = vec3(cos(angleAround) * (p->_ballCoords.w + zoomIn),
-		    0,
-		    sin(angleAround)* (p->_ballCoords.w + zoomIn));
-     viewMatrix = lookAt(p->translation+front,p->translation,_upVec);
+    vec3 front = vec3(cos(angleAround) * (p->_ballCoords.w + zoomIn) + p->translation.x,
+		    p->translation.y,
+		    sin(angleAround)* (p->_ballCoords.w + zoomIn) + p->translation.z);
+     viewMatrix = lookAt(front,p->translation,_upVec);
   }
   if(cam_state == TOPVIEW){
-    viewMatrix = lookAt(_eyePos,vec3(0,0,0),_upVec);
+    if(movState.turnLeft){
+      angleAround-=radians(speed);
+    }
+    if(movState.turnRight){
+      angleAround+=radians(speed);
+    }
+    if(movState.turnUp){
+      zoomIn -= speed;
+    }
+    if(movState.turnDown){
+      zoomIn += speed;
+    }
+    vec3 front = vec3(cos(angleAround) * ( zoomIn) ,
+		      200,
+		      sin(angleAround)* ( zoomIn) );
+    viewMatrix = lookAt(front,vec3(0,0,0),_upVec);
   }
   if(cam_state == SIDEVIEW){
+    if(movState.turnLeft){
+      angleAround-=radians(speed);
+    }
+    if(movState.turnRight){
+      angleAround+=radians(speed);
+    }
+    if(movState.turnUp){
+      zoomIn -= speed;
+    }
+    if(movState.turnDown){
+      zoomIn += speed;
+    }
+    vec3 front = vec3(cos(angleAround) * ( zoomIn) ,
+		      0,
+		      sin(angleAround)* ( zoomIn) );
+    viewMatrix = lookAt(front,vec3(0,0,0),_upVec);
     
   }
 }
