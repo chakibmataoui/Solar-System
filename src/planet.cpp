@@ -29,7 +29,10 @@ planet::planet(vec4 ballCoords,vec4 pathCoords ,vec3 elipseCoefs, vec2 rotationS
 
   //Textures
   glGenTextures(1,&_texture);
-  
+
+  //Path related
+  path = generatePath();
+  initPaths();
 }
 
 void planet::draw(){
@@ -50,6 +53,9 @@ void planet::draw(){
   glBindVertexArray(0);
   
   glBindTexture(GL_TEXTURE_2D,0);
+
+  //Draw path
+  //drawPaths();
 }
 
 void planet::assignShader(Program &shader){
@@ -71,10 +77,57 @@ void planet::loadTexture(string filepath){
 
 void planet::update(float delta){
   rotations.y +=speed.y*delta;
-  translation = vec3(cos(rotations.y)*_pathCoords.w*_elipseCoefs.x + _pathCoords.x , cos(radians(rotations.y))*_pathCoords.y,sin(rotations.y)*_pathCoords.w *_elipseCoefs.z + _pathCoords.z);
+  translation = vec3(cos(rotations.y)*_pathCoords.w*_elipseCoefs.x + _pathCoords.x , cos(radians(rotations.y))*radians(_pathCoords.y),sin(rotations.y)*_pathCoords.w *_elipseCoefs.z + _pathCoords.z);
   ModelMatrix = translate(mat4(1),translation);
 
   rotations.x += speed.x*delta;
   ModelMatrix = rotate(ModelMatrix,radians(rotations.x),vec3(0,1,0));
 	
+}
+
+void planet::updateSat(float delta,vec3 source){
+  rotations.y +=speed.y*delta;
+  translation = vec3(cos(rotations.y)*_pathCoords.w*_elipseCoefs.x + _pathCoords.x , cos(radians(rotations.y))*radians(_pathCoords.y),sin(rotations.y)*_pathCoords.w *_elipseCoefs.z + _pathCoords.z);
+  ModelMatrix = translate(mat4(1),translation);
+
+  rotations.x += speed.x*delta;
+  ModelMatrix = rotate(ModelMatrix,radians(rotations.x),vec3(0,1,0));
+
+}
+
+vector<vec3> planet::generatePath(){
+   vector<vec3> path;
+   for(float i = 0; i < 2*M_PI; i+=0.1){
+     vec3 tmp = vec3(cos(i)*_pathCoords.w + _ballCoords.x,0,0);
+     path.push_back(tmp);
+   }
+   return path;
+ }
+
+void planet::initPaths(){
+  //VBO creation
+  glGenBuffers(1,&pvbo);
+
+  glBindBuffer(GL_ARRAY_BUFFER,pvbo);
+  glBufferData(GL_ARRAY_BUFFER,path.size()*sizeof(vec3),path.data(),GL_STATIC_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER,0);
+  
+  //VAO setting
+  glGenVertexArrays(1,&pvao);
+  glBindVertexArray(pvao);
+  glEnableVertexAttribArray(VERTEX_ATTR_POSITION);
+  glBindBuffer(GL_ARRAY_BUFFER,pvbo);
+  glVertexAttribPointer(VERTEX_ATTR_POSITION,3,GL_FLOAT,GL_FALSE,sizeof(vec3),(const GLvoid*)0);
+  glBindBuffer(GL_ARRAY_BUFFER,0);
+  glBindVertexArray(0);
+  
+}
+
+void planet::drawPaths(){
+
+  
+    glBindVertexArray(pvao);
+    glDrawArrays( GL_LINE_LOOP,0,path.size());
+    glBindVertexArray(0);
+  
 }

@@ -26,7 +26,18 @@ class app{
 public:
   app(SDLWindowManager &w) : _w(&w){};
   ~app() {
-    
+    for(int i = 0; i < planetList.size();++i)
+      delete planetList[i];
+    for(int i = 0; i < marsSat.size();++i)
+      delete marsSat[i];
+    for(int i = 0; i < saturnSat.size();++i)
+      delete saturnSat[i];
+    for(int i = 0; i < uranusSat.size();++i)
+      delete uranusSat[i];
+    for(int i = 0; i < neptuneSat.size();++i)
+      delete neptuneSat[i];
+    for(int i = 0; i < plutonSat.size();++i)
+      delete plutonSat[i];
 
   };
   bool init(int w, int h);
@@ -37,7 +48,15 @@ private:
   SDLWindowManager *_w;
   //List of planets
   planet sun = planet(vec4(0,0,0,(float)1391016/ratio),vec4(0,0,0,0),vec3(1,1,1),vec2(daySpeed*25,0));
+  planet moon = planet(vec4(0,0,0,(float)3475/ratio),vec4(0,5.4,0,(float)40600/ratio),vec3(1,1,1),vec2(-1,1/24));
   vector<planet*> planetList;
+
+  vector<planet*> marsSat;
+  vector<planet*> jupiterSat;
+  vector<planet*> saturnSat;
+  vector<planet*> uranusSat;
+  vector<planet*> neptuneSat;
+  vector<planet*> plutonSat;
   //Skybox
   planet skybox = planet(vec4(0,0,0,50000));
   //Shaders generic
@@ -51,10 +70,4 @@ private:
   mat4 MV;
   mat4 MVP;
   mat4 Normal;
-  //path related
-  vector<vec3> generatePath(float radius,float y);
-  void initPaths();
-  void drawPaths();
-  GLuint pathsVBO[9],pathsVAO[9];
-  vector<vector<vec3>> paths;
 };

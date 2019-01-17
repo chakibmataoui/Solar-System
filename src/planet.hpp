@@ -22,6 +22,7 @@ public:
   };
   void draw();
   void update(float delta);
+  void updateSat(float delta,vec3 source);
   void assignShader(Program &shader);
   void loadTexture(string filepath);
   //void loadTexture();
@@ -45,4 +46,12 @@ public:
   Program *_shader;
   GLint uTime;
   GLint uSampler;
+
+  //Path related
+  GLuint pvbo;
+  GLuint pvao;
+  vector<vec3> path;
+  vector<vec3> generatePath();
+  void initPaths();
+  void drawPaths();
 };

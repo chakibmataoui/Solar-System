@@ -37,7 +37,7 @@ typedef enum camera_state{
 } camera_state;
 class camera{
 public:
-  camera(vec3 eyePos = vec3(1,0,0), vec3 eyeLook = vec3(0,0,0), vec3 upVec = vec3(0,1,0),float speed = 100);
+  camera(vec3 eyePos = vec3(1,0,0), vec3 eyeLook = vec3(0,0,0), vec3 upVec = vec3(0,1,0),float speed = 50);
   void update(float delta);
   vec3 _eyePos;
   vec3 _eyeLook;
