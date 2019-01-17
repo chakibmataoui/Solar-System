@@ -15,7 +15,9 @@ bool app::init(int w,int h){
   uMV = glGetUniformLocation(gen.getGLId(),"uMVMatrix");
   uNormal = glGetUniformLocation(gen.getGLId(),"uNormalMatrix");
   uLightDir = glGetUniformLocation(gen.getGLId(),"uLightSource");
-
+  uSpecular = glGetUniformLocation(gen.getGLId(),"specularS");
+  uAmbient = glGetUniformLocation(gen.getGLId(),"ambientStrength");
+  uRotationUV = glGetUniformLocation(gen.getGLId(),"rotationUV");
   //Sun
   sun.assignShader(gen);
   sun.loadTexture(applicationPath->dirPath() + "textures/sunmap.jpg");
@@ -67,7 +69,7 @@ bool app::init(int w,int h){
   
   vector<string> texturePath = {"mercurymap.jpg",
 				"venusmap.jpg",
-				"earthmap.jpg",
+				"EarthMap.jpg",
 				"mars_1k_color.jpg",
 				"jupitermap.jpg",
 				"saturnmap.jpg",
@@ -275,6 +277,18 @@ bool app::init(int w,int h){
     //Random start position
     //planetList[i]->rotations = vec2(0,rand());
   }
+
+
+
+  ////////////RINGS
+  saturnRings = new planet(vec4(0,0,0,diametre[5]*2),vec4(0,0,0,0),vec3(0,0,0),vec2(0,0));
+  saturnRings->assignShader(gen);
+  saturnRings->loadTexture(applicationPath->dirPath() + "textures/saturnringcolor.jpg");
+  ////////////RINGS
+  uranusRings = new planet(vec4(0,0,0,diametre[6]*1.5),vec4(0,0,0,0),vec3(0,0,0),vec2(0,0));
+  uranusRings->assignShader(gen);
+  uranusRings->loadTexture(applicationPath->dirPath() + "textures/uranusringcolour.jpg");
+  
   //Skybox
   skybox.assignShader(gen);
   skybox.loadTexture(applicationPath->dirPath() + "textures/Galaxy.jpg");
@@ -463,6 +477,15 @@ void app::update(float delta){
     plutonSat[i]->_pathCoords.z = planetList[8]->translation.z;
     plutonSat[i]->update(delta);
   }
+  //RINGS
+  saturnRings->_pathCoords.x = planetList[5]->translation.x;
+  saturnRings->_pathCoords.y = planetList[5]->translation.y;
+  saturnRings->_pathCoords.z = planetList[5]->translation.z;
+  //RINGS
+  uranusRings->_pathCoords.x = planetList[6]->translation.x;
+  uranusRings->_pathCoords.y = planetList[6]->translation.y;
+  uranusRings->_pathCoords.z = planetList[6]->translation.z;
+  //saturnRings->update(delta);
   cam.update(delta);
   sun.update(delta);
 }
@@ -470,16 +493,19 @@ void app::update(float delta){
 
 void app::draw(){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glUniform1f(uSpecular,1);
+  glUniform1f(uAmbient,0.5);
+  glUniform1f(uRotationUV,0);
   for(int i = 0; i < planetList.size(); ++i){
     /*Drawing a planet*/
-    MV = cam.viewMatrix * planetList[i]->ModelMatrix;
-    MVP = Projection * MV;
+    MV =  planetList[i]->ModelMatrix;
+    MVP = Projection * cam.viewMatrix * MV;
     Normal =  glm::transpose(glm::inverse(MV));
-  
+    vec4 camD = MV * vec4(cam._eyePos,1);
     glUniformMatrix4fv(uMVP,1,GL_FALSE,glm::value_ptr(MVP));
     glUniformMatrix4fv(uMV,1,GL_FALSE,glm::value_ptr(MV));
     glUniformMatrix4fv(uNormal,1,GL_FALSE,glm::value_ptr(Normal));
-    glUniformMatrix4fv(uLightDir,1,GL_FALSE,glm::value_ptr(cam._eyePos));
+    glUniformMatrix4fv(uLightDir,1,GL_FALSE,glm::value_ptr(vec3(camD)));
     planetList[i]->draw();
   }
   //Satelite drawing
@@ -572,6 +598,9 @@ void app::draw(){
     plutonSat[i]->draw();
   }
   /*Drawing a planet*/
+  glUniform1f(uSpecular,1);
+  glUniform1f(uAmbient,1);
+  glUniform1f(uRotationUV,0);
   MV = cam.viewMatrix * sun.ModelMatrix;
   MVP = Projection * MV;
   Normal =  glm::transpose(glm::inverse(MV));
@@ -582,6 +611,42 @@ void app::draw(){
   glUniformMatrix4fv(uLightDir,1,GL_FALSE,glm::value_ptr(cam._eyePos));
   sun.draw();
 
+
+
+  //RINGS
+  glUniform1f(uSpecular,1);
+  glUniform1f(uAmbient,0.5);
+  glUniform1f(uRotationUV,M_PI/2);
+  //moon.ModelMatrix = translate(moon.ModelMatrix,vec3(1+i,0,0));
+  mat4 tmp = planetList[5]->ModelMatrix;
+  tmp = scale(tmp,vec3(1,0.01,1));
+  MV = cam.viewMatrix * tmp;
+  MVP = Projection * MV;
+  Normal =  glm::transpose(glm::inverse(MV));
+  
+  glUniformMatrix4fv(uMVP,1,GL_FALSE,glm::value_ptr(MVP));
+  glUniformMatrix4fv(uMV,1,GL_FALSE,glm::value_ptr(MV));
+  glUniformMatrix4fv(uNormal,1,GL_FALSE,glm::value_ptr(Normal));
+  glUniformMatrix4fv(uLightDir,1,GL_FALSE,glm::value_ptr(cam._eyePos));
+  saturnRings->draw();
+
+  //Uranus RINGS
+  glUniform1f(uSpecular,0.5);
+  glUniform1f(uAmbient,0.5);
+  glUniform1f(uRotationUV,M_PI/2);
+tmp = planetList[6]->ModelMatrix;
+tmp = glm::rotate(tmp,-radians(planetList[6]->rotations.x),vec3(0,1,0));
+tmp = glm::rotate(tmp,radians(90.f),vec3(1,0,1));
+  tmp = scale(tmp,vec3(1,0.01,1));
+  MV = cam.viewMatrix * tmp;
+  MVP = Projection * MV;
+  Normal =  glm::transpose(glm::inverse(MV));
+  
+  glUniformMatrix4fv(uMVP,1,GL_FALSE,glm::value_ptr(MVP));
+  glUniformMatrix4fv(uMV,1,GL_FALSE,glm::value_ptr(MV));
+  glUniformMatrix4fv(uNormal,1,GL_FALSE,glm::value_ptr(Normal));
+  glUniformMatrix4fv(uLightDir,1,GL_FALSE,glm::value_ptr(cam._eyePos));
+  uranusRings->draw();
   /*Drawing a skybox*/
   glCullFace(GL_FRONT);  
   MV = cam.viewMatrix * skybox.ModelMatrix;

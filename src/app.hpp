@@ -38,7 +38,8 @@ public:
       delete neptuneSat[i];
     for(int i = 0; i < plutonSat.size();++i)
       delete plutonSat[i];
-
+    delete saturnRings;
+    delete uranusRings;
   };
   bool init(int w, int h);
   void handleEvent(SDL_Event e);
@@ -57,12 +58,17 @@ private:
   vector<planet*> uranusSat;
   vector<planet*> neptuneSat;
   vector<planet*> plutonSat;
+
+  //Rings
+  planet *saturnRings;
+  planet *uranusRings;
   //Skybox
   planet skybox = planet(vec4(0,0,0,50000));
   //Shaders generic
   Program gen;
   GLint uMVP,uMV,uNormal,uTextureSampler;
   GLint uLightDir;
+  GLint uSpecular,uAmbient,uRotationUV;
   //Camera related
   camera cam;
   //Projection view

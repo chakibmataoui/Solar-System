@@ -6,28 +6,37 @@ in vec2 vTexCoords; // Coordonnées de texture du sommet
 
 uniform sampler2D fSampler;
 uniform vec3 uLighSource;
+uniform float rotationUV;
+uniform float ambientStrength;
+uniform float specularS;
 out vec3 fFragColor;
+
+vec2 rotateUV(vec2 uv, float rotation)
+{
+    float mid = 0.5;
+    return vec2(
+        cos(rotation) * (uv.x - mid) + sin(rotation) * (uv.y - mid) + mid,
+        cos(rotation) * (uv.y - mid) - sin(rotation) * (uv.x - mid) + mid
+    );
+}
 
 void main() {
      //Ambient
-     float ambientStrength = 0.5;
      vec3 ambient = ambientStrength * vec3(1,1,1);
      
      //Diffuse
-     vec3 norm = normalize(vNormal_vs);
-     vec3 lightDir = normalize(vec3(0,0,0) - vPosition_vs);
-     //     lightDir = lightDir + uLighSource;
+     vec3 norm = normalize(vNormal_vs );
+     vec3 lightDir = normalize( vec3(0,0,0) - vPosition_vs  );
      float diff = max(dot(norm, lightDir), 0.0);
      vec3 diffuse = diff * vec3(1,1,1);
      
 
      // specular
-     float specularS = 0.5;
     vec3 viewDir = normalize(vec3(0,0,0) - vPosition_vs);
-    vec3 reflectDir = reflect(-lightDir, vNormal_vs);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 reflectDir = reflect(-vec3(0,0,0), vNormal_vs);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 2);
     vec3 specular = vec3(1,1,1) * (spec * specularS);
-    
-    vec3 res =  (specular + ambient + diffuse*0.5) * vec3(texture(fSampler,vTexCoords));
+    vec2 uv = rotateUV(vTexCoords,rotationUV);
+    vec3 res =  (specular + ambient + diffuse) * vec3(texture(fSampler,uv));
     fFragColor = res;
 };

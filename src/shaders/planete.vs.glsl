@@ -14,7 +14,6 @@ uniform mat4 uNormalMatrix;
 out vec3 vPosition_vs; // Position du sommet transformé dans l'espace View
 out vec3 vNormal_vs; // Normale du sommet transformé dans l'espace View
 out vec2 vTexCoords; // Coordonnées de texture du sommet
-
 void main() {
     // Passage en coordonnées homogènes
     vec4 vertexPosition = vec4(aVertexPosition, 1);
@@ -24,7 +23,6 @@ void main() {
     vPosition_vs = vec3(uMVMatrix * vertexPosition);
     vNormal_vs = vec3(uNormalMatrix * vertexNormal);
     vTexCoords = aVertexTexCoords;
-
     // Calcul de la position projetée
     gl_Position = uMVPMatrix*vertexPosition;
 }
