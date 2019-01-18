@@ -15,6 +15,7 @@ using namespace glimac;
 using namespace std;
 using namespace glm;
 
+//State of the user inputs
 typedef struct movements{
   bool moveRight = false;
   bool moveLeft  = false;
@@ -28,6 +29,7 @@ typedef struct movements{
   bool moveDown = false;
 } movements;
 
+//Camera state enum
 typedef enum camera_state{
 			  TOPVIEW,
 			  SIDEVIEW,
@@ -35,6 +37,7 @@ typedef enum camera_state{
 			  FREEVIEW
 			  
 } camera_state;
+
 class camera{
 public:
   camera(vec3 eyePos = vec3(1,0,0), vec3 eyeLook = vec3(0,0,0), vec3 upVec = vec3(0,1,0),float speed = 50);
@@ -43,12 +46,13 @@ public:
   vec3 _eyeLook;
   vec3 _upVec;
   float _speed;
+  //camera front used to compute the camera freefly vector for the eye looking position
   vec3 cameraFront;
   mat4 viewMatrix;
   movements movState;
   camera_state cam_state;
   //Planet view
-  planet *p;
+  planet *p; // planet pointer for the planet view coordinates update  (not mentioned in the report)
   float angleAround = 0;
   float zoomIn = 100;
 };

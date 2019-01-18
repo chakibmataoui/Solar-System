@@ -10,7 +10,7 @@ uniform float rotationUV;
 uniform float ambientStrength;
 uniform float specularS;
 out vec3 fFragColor;
-
+//Ref : https://gist.github.com/ayamflow/c06bc0c8a64f985dd431bd0ac5b557cd
 vec2 rotateUV(vec2 uv, float rotation)
 {
     float mid = 0.5;

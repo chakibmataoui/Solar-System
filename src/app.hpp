@@ -20,8 +20,8 @@ using namespace glm;
 extern FilePath *applicationPath;
 
 
-const float ratio = 30000;
-const float daySpeed = 1;
+const float ratio = 30000; //Normalization ratio
+const float daySpeed = 1;//Speed of 1 day
 class app{
 public:
   app(SDLWindowManager &w) : _w(&w){};
@@ -41,17 +41,17 @@ public:
     delete saturnRings;
     delete uranusRings;
   };
-  bool init(int w, int h);
-  void handleEvent(SDL_Event e);
-  void update(float delta);
-  void draw();
+  bool init(int w, int h); //Init the world and opengl related functionalities
+  void handleEvent(SDL_Event e); //Handle key enter events
+  void update(float delta); //Update the physics
+  void draw(); //Draw the world
 private:
   SDLWindowManager *_w;
   //List of planets
-  planet sun = planet(vec4(0,0,0,(float)1391016/ratio),vec4(0,0,0,0),vec3(1,1,1),vec2(daySpeed*25,0));
+  planet sun = planet(vec4(0,0,0,(float)1391016/ratio),vec4(0,0,0,0),vec3(1,1,1),vec2(daySpeed*25,0)); 
   planet moon = planet(vec4(0,0,0,(float)3475/ratio),vec4(0,5.4,0,(float)40600/ratio),vec3(1,1,1),vec2(-1,1/24));
-  vector<planet*> planetList;
-
+  vector<planet*> planetList; //The list of the main planets
+  //Satelites arrays
   vector<planet*> marsSat;
   vector<planet*> jupiterSat;
   vector<planet*> saturnSat;

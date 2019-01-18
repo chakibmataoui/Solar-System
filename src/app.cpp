@@ -7,7 +7,7 @@ bool app::init(int w,int h){
   glEnable(GL_CULL_FACE);
   //Init projections
   Projection  = perspective(radians(45.f),(float)w/h,0.1f,100000.f);
-  //TODO : INIT CAMERA TO BE CHANGED HERE
+
 
   //Loading shaders
   gen = loadProgram(applicationPath->dirPath() + "shaders/planete.vs.glsl", applicationPath->dirPath() + "shaders/planete.fs.glsl");
@@ -18,11 +18,11 @@ bool app::init(int w,int h){
   uSpecular = glGetUniformLocation(gen.getGLId(),"specularS");
   uAmbient = glGetUniformLocation(gen.getGLId(),"ambientStrength");
   uRotationUV = glGetUniformLocation(gen.getGLId(),"rotationUV");
-  //Sun
+  //Sun init
   sun.assignShader(gen);
   sun.loadTexture(applicationPath->dirPath() + "textures/sunmap.jpg");
 
-  //Moon
+  //Moon init
   moon.assignShader(gen);
   moon.loadTexture(applicationPath->dirPath() + "textures/moonmap1k.jpg");
   /*vector<planet*> planetList = {mercury,
@@ -34,7 +34,7 @@ bool app::init(int w,int h){
 				uranus,
 				neptune,
 				pluton};*/
-
+  /*Here initialize all the related data to the world space from the Nasa website*/
   vector<float> diametre = {(float)4879/ratio,
 			    (float)12104/ratio,
 			    (float)12765/ratio,
@@ -62,6 +62,7 @@ bool app::init(int w,int h){
 			       2741.3,
 			       4444.5,
 			       4436.8};
+  //Compute the radius based on the aphelion and periphelion and than compute the new center in the init function
   vector<float> radius;
   for(int i = 0; i < aphelion.size();++i){
     radius.push_back((aphelion[i]+periphelion[i])/2);
@@ -103,6 +104,8 @@ bool app::init(int w,int h){
 			   0.8 ,
 			   1.8 ,
 			   17.2};
+  //Turn speed set
+  //TODO : Find a way to modify the turn speed in runtime
   float turnSpeed = 0.01;
   /* démarrage en position aléatoire */
   srand (time(NULL));
@@ -115,7 +118,7 @@ bool app::init(int w,int h){
     //planetList[i]->rotations = vec2(0,rand());
   }
   
-  //Satellite init
+  //Satellite init data
   //Mars
   vector<float> Marsdiametre = {(float)15/ratio,
 			    (float)7.8/ratio};
@@ -281,6 +284,7 @@ bool app::init(int w,int h){
 
 
   ////////////RINGS
+  //Both rings are just planets that we scale at Y and rotate the UV in the shader 
   saturnRings = new planet(vec4(0,0,0,diametre[5]*2),vec4(0,0,0,0),vec3(0,0,0),vec2(0,0));
   saturnRings->assignShader(gen);
   saturnRings->loadTexture(applicationPath->dirPath() + "textures/saturnringcolor.jpg");
@@ -346,6 +350,8 @@ void app::handleEvent(SDL_Event e){
       cam.cam_state = TOPVIEW;
     }
     //View Planet N
+    //For the planet view we update the coordinates of each camera by giving a pointer to the current planet we want to focus on
+    //I could have used that for the satellite updates too
     if(e.key.keysym.sym == SDLK_KP0){
       cam.p = &sun;
       cam.zoomIn = sun._ballCoords.w*2;
@@ -433,14 +439,16 @@ void app::handleEvent(SDL_Event e){
 }
 
 void app::update(float delta){
+  //Updating planets
   for(int i = 0; i < planetList.size(); ++i){
     planetList[i]->update(delta);
   }
+  //Update moon coordinates
   moon._pathCoords.x = planetList[2]->translation.x;
   moon._pathCoords.y = planetList[2]->translation.y;
   moon._pathCoords.z = planetList[2]->translation.z;
   moon.update(delta);
-
+  //Update satelite coordinates
   for(int i = 0; i < marsSat.size();++i){
     marsSat[i]->_pathCoords.x = planetList[3]->translation.x;
     marsSat[i]->_pathCoords.y = planetList[3]->translation.y;
@@ -478,24 +486,30 @@ void app::update(float delta){
     plutonSat[i]->update(delta);
   }
   //RINGS
+  //Update rings coordinates
   saturnRings->_pathCoords.x = planetList[5]->translation.x;
   saturnRings->_pathCoords.y = planetList[5]->translation.y;
   saturnRings->_pathCoords.z = planetList[5]->translation.z;
-  //RINGS
+  //RINGs
   uranusRings->_pathCoords.x = planetList[6]->translation.x;
   uranusRings->_pathCoords.y = planetList[6]->translation.y;
   uranusRings->_pathCoords.z = planetList[6]->translation.z;
   //saturnRings->update(delta);
+  //Update camera coordinates
   cam.update(delta);
+  //Update sun coordinates
   sun.update(delta);
 }
 
 
 void app::draw(){
+  //Clearing buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  //setting lighting 
   glUniform1f(uSpecular,1);
   glUniform1f(uAmbient,0.5);
   glUniform1f(uRotationUV,0);
+  //Drawing main planets
   for(int i = 0; i < planetList.size(); ++i){
     /*Drawing a planet*/
     MV =  planetList[i]->ModelMatrix;
@@ -616,6 +630,10 @@ void app::draw(){
   //RINGS
   glUniform1f(uSpecular,1);
   glUniform1f(uAmbient,0.5);
+  //I forgot to mention this in the report : It's the rotation value for the texture
+  /*
+    ref of the function : https://gist.github.com/ayamflow/c06bc0c8a64f985dd431bd0ac5b557cd
+   */
   glUniform1f(uRotationUV,M_PI/2);
   //moon.ModelMatrix = translate(moon.ModelMatrix,vec3(1+i,0,0));
   mat4 tmp = planetList[5]->ModelMatrix;
@@ -634,6 +652,7 @@ void app::draw(){
   glUniform1f(uSpecular,0.5);
   glUniform1f(uAmbient,0.5);
   glUniform1f(uRotationUV,M_PI/2);
+  //Rotation of the uranus rings two times one for the Y to face the sun and the second to be vertical
 tmp = planetList[6]->ModelMatrix;
 tmp = glm::rotate(tmp,-radians(planetList[6]->rotations.x),vec3(0,1,0));
 tmp = glm::rotate(tmp,radians(90.f),vec3(1,0,1));
@@ -647,7 +666,7 @@ tmp = glm::rotate(tmp,radians(90.f),vec3(1,0,1));
   glUniformMatrix4fv(uNormal,1,GL_FALSE,glm::value_ptr(Normal));
   glUniformMatrix4fv(uLightDir,1,GL_FALSE,glm::value_ptr(cam._eyePos));
   uranusRings->draw();
-  /*Drawing a skybox*/
+  /*Drawing a skybox*/p
   glCullFace(GL_FRONT);  
   MV = cam.viewMatrix * skybox.ModelMatrix;
   MVP = Projection * MV;
@@ -656,6 +675,7 @@ tmp = glm::rotate(tmp,radians(90.f),vec3(1,0,1));
   glUniformMatrix4fv(uMV,1,GL_FALSE,glm::value_ptr(MV));
   glUniformMatrix4fv(uNormal,1,GL_FALSE,glm::value_ptr(Normal));
   skybox.draw();
+  //Setting cull face to its origin to not affect other plantes
   glCullFace(GL_BACK);
 }
 

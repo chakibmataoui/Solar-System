@@ -76,6 +76,7 @@ void planet::loadTexture(string filepath){
 
 
 void planet::update(float delta){
+  //Updating the model matrix of the planet according to the rotation speed
   rotations.y +=speed.y*delta;
   translation = vec3(cos(rotations.y)*_pathCoords.w*_elipseCoefs.x + _pathCoords.x , cos(radians(rotations.y))*radians(_pathCoords.y),sin(rotations.y)*_pathCoords.w *_elipseCoefs.z + _pathCoords.z);
   ModelMatrix = translate(mat4(1),translation);
@@ -86,6 +87,7 @@ void planet::update(float delta){
 }
 
 void planet::updateSat(float delta,vec3 source){
+  //Same than update except we pass the original planet path
   rotations.y +=speed.y*delta;
   translation = vec3(cos(rotations.y)*_pathCoords.w*_elipseCoefs.x + _pathCoords.x , cos(radians(rotations.y))*radians(_pathCoords.y),sin(rotations.y)*_pathCoords.w *_elipseCoefs.z + _pathCoords.z);
   ModelMatrix = translate(mat4(1),translation);

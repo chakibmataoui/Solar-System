@@ -22,7 +22,7 @@ public:
   };
   void draw();
   void update(float delta);
-  void updateSat(float delta,vec3 source);
+  void updateSat(float delta,vec3 source); //Not used 
   void assignShader(Program &shader);
   void loadTexture(string filepath);
   //void loadTexture();
@@ -44,11 +44,11 @@ public:
   //Shader related
  
   Program *_shader;
-  GLint uTime;
-  GLint uSampler;
+  GLint uTime; // Not used
+  GLint uSampler; //Not used part of the app.cpp 
 
-  //Path related
-  GLuint pvbo;
+  //Path related path not working at end
+  GLuint pvbo; 
   GLuint pvao;
   vector<vec3> path;
   vector<vec3> generatePath();

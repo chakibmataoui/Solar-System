@@ -41,6 +41,7 @@ int main(int argc, char** argv) {
             }
 	    solar_sys.handleEvent(e);
         }
+	//Send lag time to the solar system app update
 	float currentTime = windowManager.getTime();
 	delta = currentTime - lastTime;
 	lastTime = currentTime;
@@ -49,6 +50,7 @@ int main(int argc, char** argv) {
         /*********************************
          * HERE SHOULD COME THE RENDERING CODE
          *********************************/
+	//After updating the solar system physics draw the world
 	solar_sys.draw();
         // Update the display
         windowManager.swapBuffers();

@@ -1,6 +1,7 @@
 #include "camera.hpp"
 
 camera::camera(vec3 eyePos,vec3 eyeLook, vec3 upVec,float speed) : _eyePos(eyePos) , _eyeLook(eyeLook), _upVec(upVec),_speed(speed){
+  
   viewMatrix = lookAt(_eyePos,_eyeLook,_upVec);
   cam_state = FREEVIEW;
   cameraFront = vec3(0,0,-1);
@@ -9,7 +10,7 @@ camera::camera(vec3 eyePos,vec3 eyeLook, vec3 upVec,float speed) : _eyePos(eyePo
 void camera::update(float delta){
   float speed = _speed*delta;
   if(cam_state == FREEVIEW){
-    //Movements
+    //Movements here for the free fly just compute the new vector to point to according to the speed of rotation
     if(movState.moveLeft){
       _eyePos -= normalize(cross(cameraFront,_upVec))*speed;
     }
@@ -42,6 +43,7 @@ void camera::update(float delta){
     if(movState.turnDown){
       _eyeLook.y-=radians(speed);
     }
+    //Compute the new eye look coords vector
     vec3 front = vec3(cos(_eyeLook.x) * cos(_eyeLook.y),
 		    sin(_eyeLook.y),
 		    sin(_eyeLook.x) * cos(_eyeLook.y));
@@ -61,6 +63,7 @@ void camera::update(float delta){
     if(movState.turnDown){
       zoomIn += speed;
     }
+    //Simple rotation based on the position of the planet 
     vec3 front = vec3(cos(angleAround) * (p->_ballCoords.w + zoomIn) + p->translation.x,
 		    p->translation.y,
 		    sin(angleAround)* (p->_ballCoords.w + zoomIn) + p->translation.z);
