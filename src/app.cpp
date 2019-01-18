@@ -666,7 +666,7 @@ tmp = glm::rotate(tmp,radians(90.f),vec3(1,0,1));
   glUniformMatrix4fv(uNormal,1,GL_FALSE,glm::value_ptr(Normal));
   glUniformMatrix4fv(uLightDir,1,GL_FALSE,glm::value_ptr(cam._eyePos));
   uranusRings->draw();
-  /*Drawing a skybox*/p
+  /*Drawing a skybox*/
   glCullFace(GL_FRONT);  
   MV = cam.viewMatrix * skybox.ModelMatrix;
   MVP = Projection * MV;
